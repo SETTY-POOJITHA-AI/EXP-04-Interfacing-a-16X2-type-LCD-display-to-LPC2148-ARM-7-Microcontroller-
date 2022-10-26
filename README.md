@@ -1,13 +1,8 @@
 # EXP-04-Interfacing a 16X2 type LCD display to LPC2148 ARM 7Microcontroller
 
-Name :
+Name :s.poojitha
 
-Roll no :
-
-Date of experiment :
-
- 
-
+Roll no :212221240050
 
 ## Interfacing a 16X2 type LCD display to LPC2148 ARM 7 Microcontroller 
 
@@ -122,6 +117,81 @@ Step 9: Select the hex file from the Kiel program folder and import the program 
 
 
 ## Kiel - Program  
+```
+#include <lpc214x.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+void delay_ms(uint16_t j)
+{
+    uint16_t x,i;
+	for(i=0;i<j;i++)
+	{
+    for(x=0; x<6000; x++);
+	}
+}
+
+void LCD_CMD(char command)
+{
+	IO0PIN = ( (IO0PIN & 0xFFFF00FF) | (command<<8) );
+	IO0SET = 0x00000040;
+	IO0CLR = 0x00000030;
+	delay_ms(2);
+	IO0CLR = 0x00000040;
+	delay_ms(5);
+}
+
+void LCD_INIT(void)
+{
+	IO0DIR = 0x0000FFF0;
+	delay_ms(20);
+	LCD_CMD(0x38);
+	LCD_CMD(0x0C);
+	LCD_CMD(0x06);
+	LCD_CMD(0x01);
+	LCD_CMD(0x80);
+}
+
+void LCD_STRING (char* msg)
+{
+	uint8_t i=0;
+	while(msg[i]!=0)
+	{
+		IO0PIN = ( (IO0PIN & 0xFFFF00FF) | (msg[i]<<8) );
+		IO0SET = 0x00000050;
+		IO0CLR = 0x00000020;
+		delay_ms(2);
+		IO0CLR = 0x00000040;
+		delay_ms(5);
+		i++;
+	}
+}
+
+void LCD_CHAR (char msg)
+{
+		IO0PIN = ( (IO0PIN & 0xFFFF00FF) | (msg<<8) );
+		IO0SET = 0x00000050;
+		IO0CLR = 0x00000020;
+		delay_ms(2);
+		IO0CLR = 0x00000040;
+		delay_ms(5);
+}
+
+int main(void)
+{
+	uint8_t j;
+	char val_j[3];
+	j = 0;
+	
+	LCD_INIT();
+	LCD_STRING("19EE309");
+	LCD_CMD(0xC0);
+	LCD_STRING("ARM");
+
+	return 0;
+}
+
 
 
 
@@ -129,10 +199,15 @@ Step 9: Select the hex file from the Kiel program folder and import the program 
 
 ## Proteus simulation 
 
+![image](https://user-images.githubusercontent.com/93427581/198029384-95c41561-1b5c-45fe-8335-902b25d92c35.png)
 
 
+![image](https://user-images.githubusercontent.com/93427581/198029465-b3d8fd62-34e7-4bc7-ad1f-8802d1c9de2e.png)
 
 ##  layout Diagram 
+
+![image](https://user-images.githubusercontent.com/93427581/198029517-4bf5b255-852b-4150-a388-d6309b35af77.png)
+
 
 
 
